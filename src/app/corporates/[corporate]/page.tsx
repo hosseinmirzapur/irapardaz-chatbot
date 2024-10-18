@@ -1,4 +1,4 @@
-import CorporateContainer from "../components/corporates/CorporateContainer"
+import CorporateContainer from "@/app/components/corporates/CorporateContainer"
 
 interface PageProps {
    corporate: string
