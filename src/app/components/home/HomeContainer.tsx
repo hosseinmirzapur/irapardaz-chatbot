@@ -1,26 +1,24 @@
 "use client"
 
 import Image from "next/image"
+import { useRouter } from "next/navigation"
 
 import { Button } from "@nextui-org/react"
 
-import { BsChatText } from "react-icons/bs"
-import { useRouter } from "next/navigation"
+import { FaList } from "react-icons/fa"
+import { IoMdAdd } from "react-icons/io"
 
 const HomeContainer = () => {
    // ** States and variables
    const router = useRouter()
 
    // ** Functions
-   const handleChatPage = () => {
-      const corporate = process.env.NEXT_PUBLIC_CORPORATE as string
-      console.log(corporate)
-      if (!corporate || corporate === "") {
-         alert("لطفا ابتدا نام سازمان درخواست کننده را تنظیم کنید")
-         return
-      }
+   const handleCorporateList = () => {
+      router.push("/corporates")
+   }
 
-      router.push(`/${corporate}`)
+   const handleAddCorporate = () => {
+      // todo: Open modal and add a new corporate
    }
 
    return (
@@ -55,16 +53,26 @@ const HomeContainer = () => {
          >
             سامانه مدیریت چت بات های هوشمند ایراپرداز
          </h1>
-         <div>
+         <div className="flex flex-col md:flex-row gap-5">
             <Button
                radius="lg"
                color="primary"
                variant="shadow"
-               endContent={<BsChatText size={22} />}
+               endContent={<FaList size={22} />}
                size="lg"
-               onClick={handleChatPage}
+               onClick={handleCorporateList}
             >
-               رفتن به صفحه چت
+               لیست شرکت ها
+            </Button>
+            <Button
+               radius="lg"
+               color="primary"
+               variant="shadow"
+               endContent={<IoMdAdd size={22} />}
+               size="lg"
+               onClick={handleAddCorporate}
+            >
+               افزودن شرکت جدید
             </Button>
          </div>
       </div>
