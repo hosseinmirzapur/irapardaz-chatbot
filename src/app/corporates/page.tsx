@@ -1,7 +1,10 @@
+import { Metadata } from "next"
+import CorporateListContainer from "../components/corporates/CorporateListContainer"
+
+export const metadata: Metadata = {
+   title: "لیست شرکت ها",
+}
+
 export default function () {
-   return (
-      <div className="flex items-center justify-center h-[100vh] text-4xl">
-         Corporates list
-      </div>
-   )
+   return <CorporateListContainer />
 }

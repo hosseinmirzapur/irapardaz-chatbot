@@ -3,22 +3,27 @@
 import Image from "next/image"
 import { useRouter } from "next/navigation"
 
+import { useState } from "react"
+
 import { Button } from "@nextui-org/react"
 
 import { FaList } from "react-icons/fa"
 import { IoMdAdd } from "react-icons/io"
+import CorporateModal from "../corporates/CorporateModal"
 
 const HomeContainer = () => {
    // ** States and variables
    const router = useRouter()
+   const [corpModal, setCorpModal] = useState(false)
 
    // ** Functions
+   const toggleOpen = () => setCorpModal((prev) => !prev)
    const handleCorporateList = () => {
       router.push("/corporates")
    }
 
    const handleAddCorporate = () => {
-      // todo: Open modal and add a new corporate
+      toggleOpen()
    }
 
    return (
@@ -75,6 +80,12 @@ const HomeContainer = () => {
                افزودن شرکت جدید
             </Button>
          </div>
+         <CorporateModal
+            isOpen={corpModal}
+            mode="create"
+            toggleChange={() => {}}
+            toggleOpen={toggleOpen}
+         />
       </div>
    )
 }
