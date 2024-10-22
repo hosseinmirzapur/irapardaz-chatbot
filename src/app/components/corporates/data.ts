@@ -6,6 +6,17 @@ export interface Corporate {
    status: "PENDING" | "ACCEPTED" | "REJECTED"
 }
 
+export interface Chat {
+   id: number | string
+   slug: string
+}
+
+export interface Message {
+   id: number | string
+   role: "user" | "bot"
+   text: string
+}
+
 export const corporates: Corporate[] = [
    {
       id: 1,
@@ -56,5 +67,48 @@ export const corporates: Corporate[] = [
       id: 10,
       name: "Innovative Learning Solutions",
       status: "PENDING",
+   },
+]
+
+export const chats: Chat[] = [
+   {
+      id: 1,
+      slug: "welcome-to-the-chat",
+   },
+   {
+      id: 2,
+      slug: "tech-talks",
+   },
+   {
+      id: 3,
+      slug: "health-and-wellness",
+   },
+   {
+      id: 4,
+      slug: "travel-adventures",
+   },
+   {
+      id: 5,
+      slug: "foodie-favorites",
+   },
+   {
+      id: 6,
+      slug: "book-club",
+   },
+   {
+      id: 7,
+      slug: "gaming-community",
+   },
+   {
+      id: 8,
+      slug: "music-lovers",
+   },
+   {
+      id: 9,
+      slug: "film-critics",
+   },
+   {
+      id: 10,
+      slug: "fitness-friends",
    },
 ]

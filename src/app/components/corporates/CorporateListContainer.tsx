@@ -25,7 +25,7 @@ import { Corporate, corporates } from "./data"
 
 import api from "@/external/api"
 
-import { BsPlus, BsThreeDotsVertical } from "react-icons/bs"
+import { BsChat, BsPlus, BsThreeDotsVertical } from "react-icons/bs"
 import {
    MdArrowBackIosNew,
    MdHome,
@@ -35,6 +35,7 @@ import {
 import { AiOutlineDelete } from "react-icons/ai"
 
 import CorporateModal from "./CorporateModal"
+import { useRouter } from "next/navigation"
 
 const CorporateListContainer = () => {
    // ** States and variables
@@ -43,6 +44,7 @@ const CorporateListContainer = () => {
    const [mode, setMode] = useState<"edit" | "delete" | "create">("edit")
    const [selectedCorp, setSelectedCorp] = useState<Corporate>()
    const [corpModal, setCorpModal] = useState(false)
+   const { push } = useRouter()
 
    // ** Functions
    const getCorps = async () => {
@@ -180,6 +182,14 @@ const CorporateListContainer = () => {
                            </DropdownTrigger>
                            <DropdownMenu variant="faded" color="primary">
                               <DropdownItem
+                                 key={"navigate"}
+                                 startContent={<BsChat size={22} />}
+                                 color="secondary"
+                                 onClick={() => push(`/corporates/${corp.id}`)}
+                              >
+                                 رفتن به صفحه چت
+                              </DropdownItem>
+                              <DropdownItem
                                  key={"edit"}
                                  startContent={<MdOutlineModeEdit size={22} />}
                                  onClick={() => {
@@ -198,6 +208,7 @@ const CorporateListContainer = () => {
                                     setMode("delete")
                                     toggleModal()
                                  }}
+                                 color="danger"
                               >
                                  حذف
                               </DropdownItem>
