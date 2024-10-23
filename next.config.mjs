@@ -1,4 +1,8 @@
 /** @type {import('next').NextConfig} */
-const nextConfig = {};
+const nextConfig = {
+   images: {
+      domains: ["https://irapardaz-chatbots.storage.iran.liara.space"],
+   },
+}
 
-export default nextConfig;
+export default nextConfig
