@@ -1,7 +1,12 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
    images: {
-      domains: ["https://irapardaz-chatbots.storage.iran.liara.space"],
+      remotePatterns: [
+         {
+            hostname: "irapardaz-chatbots.storage.iran.liara.space",
+            protocol: "https",
+         },
+      ],
    },
 }
 

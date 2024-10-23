@@ -1,6 +1,6 @@
 "use client"
 
-import { Avatar, Button } from "@nextui-org/react"
+import { Avatar, Button, Spinner } from "@nextui-org/react"
 
 import { Chat, Corporate } from "../corporates/data"
 
@@ -8,8 +8,9 @@ import { Menu, MenuItem, Sidebar } from "react-pro-sidebar"
 
 import { useState } from "react"
 import { GoSidebarCollapse } from "react-icons/go"
-import { MdAdd } from "react-icons/md"
+import { MdAdd, MdClose } from "react-icons/md"
 import api from "@/external/api"
+import { RiChatThreadLine } from "react-icons/ri"
 
 interface IProps {
    history: Chat[]
@@ -17,6 +18,9 @@ interface IProps {
    corporate: string
    toggleChange: () => void
    currentCorp?: Corporate
+   isEmpty: boolean
+   isLoading: boolean
+   selectedChat?: Chat
 }
 
 const ChatHistoryContainer: React.FC<IProps> = ({
@@ -25,6 +29,9 @@ const ChatHistoryContainer: React.FC<IProps> = ({
    corporate,
    toggleChange,
    currentCorp,
+   isEmpty,
+   isLoading,
+   selectedChat,
 }) => {
    // ** States and variables
    const [collapsed, setCollapsed] = useState(false)
@@ -36,23 +43,20 @@ const ChatHistoryContainer: React.FC<IProps> = ({
    const createNewChat = async () => {
       setLoading(true)
       const { data } = await api.post(`/corporates/${corporate}/chat`)
+      selectChat(data.chat)
       toggleChange()
       setLoading(false)
    }
 
    return (
-      <Sidebar className="py-5 space-y-10" collapsed={collapsed}>
+      <Sidebar className="py-5 space-y-10 min-h-screen" collapsed={collapsed}>
          <div className="bg-primary-100 flex items-center justify-center">
             <Avatar
                src={`https://irapardaz-chatbots.storage.iran.liara.space/${currentCorp?.logo}`}
                name={currentCorp?.name}
             />
          </div>
-         <div
-            className={`bg-primary-100 flex ${
-               collapsed ? "justify-center" : "justify-start"
-            } p-4`}
-         >
+         <div className={`bg-primary-100 flex justify-center p-4`}>
             <Button
                isIconOnly
                variant="flat"
@@ -66,35 +70,60 @@ const ChatHistoryContainer: React.FC<IProps> = ({
                />
             </Button>
          </div>
-         <Menu
-            className="bg-primary-100"
-            menuItemStyles={{
-               button: {
-                  // the active class will be added automatically by react router
-                  // so we can use it to style the active menu item
-                  [`&.active`]: {
-                     backgroundColor: "#13395e",
-                     color: "#b6c8d9",
-                  },
-               },
-            }}
-         >
+         <Menu className="bg-primary-100">
             <div className="flex items-center justify-center mb-10">
                <Button
                   color="primary"
                   variant="ghost"
-                  startContent={<MdAdd size={22} />}
+                  startContent={collapsed ? <></> : <MdAdd size={22} />}
                   onClick={createNewChat}
                   isLoading={loading}
+                  isIconOnly={collapsed}
+                  radius={collapsed ? "full" : "md"}
                >
-                  افزودن چت جدید
+                  {collapsed ? (
+                     <MdAdd size={22} />
+                  ) : (
+                     <span>افزودن چت جدید</span>
+                  )}
                </Button>
             </div>
-            {history.map((chat, index) => (
-               <MenuItem key={index} onClick={() => selectChat(chat)}>
-                  {chat.slug}
-               </MenuItem>
-            ))}
+
+            {isLoading ? (
+               <>
+                  {isEmpty ? (
+                     <div className="text-center">تاریخچه ای ثبت نشده است</div>
+                  ) : (
+                     <div className="flex items-center justify-center">
+                        <Spinner color="primary" />
+                     </div>
+                  )}
+               </>
+            ) : (
+               history.map((chat, index) => (
+                  <div
+                     className={`
+                        hover:bg-primary-200
+                        ${selectedChat?.id == chat.id ? "bg-primary-300" : ""}
+                        cursor-pointer
+                        transition-all
+                        duration-300
+                        ease-in-out
+                        h-10
+                        flex
+                        items-center
+                        justify-center
+                     `}
+                     key={index}
+                     onClick={() => selectChat(chat)}
+                  >
+                     <div className="flex justify-around w-full">
+                        {!collapsed && <RiChatThreadLine size={22} />}
+                        {chat.slug}
+                     </div>
+                  </div>
+               ))
+            )}
          </Menu>
       </Sidebar>
    )

@@ -1,7 +1,7 @@
 export interface Corporate {
    id: number | string
    name: string
-   chatBg?: string
+   chat_bg?: string
    logo?: string
    status: "PENDING" | "ACCEPTED" | "REJECTED"
 }
