@@ -37,9 +37,9 @@ jobs:
               SERVER_IP: ${{ secrets.SERVER_IP }}
               USERNAME: ${{ secrets.USERNAME }}
            run: |
-              echo "$SSH_PRIVATE_KEY" > private_key
+              echo "$SSH_PRIVATE_KEY" | tr -d '\r' > private_key
               chmod 600 private_key
-              ssh -i private_key $USERNAME@$SERVER_IP << 'EOF'
+              ssh StrictHostKeyChecking=no -i private_key $USERNAME@$SERVER_IP << 'EOF'
                 # Pull the latest image from Docker Hub
                 docker pull $USERNAME/irapardaz-chatbots:latest
                 
@@ -49,3 +49,6 @@ jobs:
                 # Run the new container
                 docker run -d --name irapardaz-chatbots -p 3000:3000 $USERNAME/irapardaz-chatbots:latest
               EOF
+
+              # Clean up the temporary key file
+              rm -f private_key
