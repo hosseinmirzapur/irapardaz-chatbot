@@ -39,7 +39,7 @@ jobs:
            run: |
               echo "$SSH_PRIVATE_KEY" | tr -d '\r' > private_key
               chmod 600 private_key
-              ssh StrictHostKeyChecking=no -i private_key $USERNAME@$SERVER_IP << 'EOF'
+              ssh -o StrictHostKeyChecking=no -i private_key $USERNAME@$SERVER_IP << 'EOF'
                 # Pull the latest image from Docker Hub
                 docker pull $USERNAME/irapardaz-chatbots:latest
                 
