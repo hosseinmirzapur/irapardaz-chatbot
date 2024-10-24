@@ -1,16 +1,17 @@
 "use client"
 
+import { useState } from "react"
 import { Avatar, Button, Spinner } from "@nextui-org/react"
 
 import { Chat, Corporate } from "../corporates/data"
 
-import { Menu, MenuItem, Sidebar } from "react-pro-sidebar"
+import { Menu, Sidebar } from "react-pro-sidebar"
 
-import { useState } from "react"
 import { GoSidebarCollapse } from "react-icons/go"
-import { MdAdd, MdClose } from "react-icons/md"
-import api from "@/external/api"
+import { MdAdd } from "react-icons/md"
 import { RiChatThreadLine } from "react-icons/ri"
+
+import api from "@/external/api"
 
 interface IProps {
    history: Chat[]

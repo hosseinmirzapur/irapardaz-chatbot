@@ -206,7 +206,7 @@ const CorporateModal: React.FC<IProps> = ({
          placement="center"
       >
          <ModalContent>
-            {(onClose) => (
+            {() => (
                <>
                   <ModalHeader>{modalHeader()}</ModalHeader>
                   <ModalBody>

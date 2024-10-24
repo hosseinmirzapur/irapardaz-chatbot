@@ -1,12 +1,11 @@
 "use client"
 
-import { Avatar, Button, Input, Spinner, Textarea } from "@nextui-org/react"
-import { Chat, Corporate, Message } from "../corporates/data"
+import { Avatar, Button, Spinner, Textarea } from "@nextui-org/react"
+import { Chat, Message } from "../corporates/data"
 import { MdSend } from "react-icons/md"
 import { useState } from "react"
 import api from "@/external/api"
 import { BiMicrophone } from "react-icons/bi"
-import Image from "next/image"
 
 interface IProps {
    messages?: Message[]
