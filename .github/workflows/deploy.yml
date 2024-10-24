@@ -41,13 +41,13 @@ jobs:
               chmod 600 private_key
               ssh -o StrictHostKeyChecking=no -i private_key $USERNAME@$SERVER_IP << 'EOF'
                 # Pull the latest image from Docker Hub
-                docker pull $USERNAME/irapardaz-chatbots:latest
+                docker pull ${{ secrets.DOCKER_USERNAME }}/irapardaz-chatbots:latest
                 
                 # Stop and remove any existing container (if running)
                 docker stop irapardaz-chatbots || true && docker rm irapardaz-chatbots || true
                 
                 # Run the new container
-                docker run -d --name irapardaz-chatbots -p 3000:3000 $USERNAME/irapardaz-chatbots:latest
+                docker run -d --name irapardaz-chatbots -p 3000:3000 ${{ secrets.DOCKER_USERNAME }}/irapardaz-chatbots:latest
               EOF
 
               # Clean up the temporary key file
