@@ -50,11 +50,19 @@ const ChatHistoryContainer: React.FC<IProps> = ({
    }
 
    return (
-      <Sidebar className="py-5 space-y-10 min-h-screen" collapsed={collapsed}>
+      <Sidebar
+         className="py-5 space-y-10 min-h-screen h-full"
+         collapsed={collapsed}
+      >
          <div className="bg-primary-100 flex items-center justify-center">
             <Avatar
-               src={`https://irapardaz-chatbots.storage.iran.liara.space/${currentCorp?.logo}`}
+               src={
+                  currentCorp?.logo
+                     ? `https://irapardaz-chatbots.storage.iran.liara.space/${currentCorp?.logo}`
+                     : undefined
+               }
                name={currentCorp?.name}
+               color="primary"
             />
          </div>
          <div className={`bg-primary-100 flex justify-center p-4`}>
@@ -71,8 +79,8 @@ const ChatHistoryContainer: React.FC<IProps> = ({
                />
             </Button>
          </div>
-         <Menu className="bg-primary-100">
-            <div className="flex items-center justify-center mb-10">
+         <Menu className="bg-primary-100 h-full w-full">
+            <div className="flex items-center justify-center mb-10 overflow-hidden">
                <Button
                   color="primary"
                   variant="ghost"
@@ -91,15 +99,9 @@ const ChatHistoryContainer: React.FC<IProps> = ({
             </div>
 
             {isLoading ? (
-               <>
-                  {isEmpty ? (
-                     <div className="text-center">تاریخچه ای ثبت نشده است</div>
-                  ) : (
-                     <div className="flex items-center justify-center">
-                        <Spinner color="primary" />
-                     </div>
-                  )}
-               </>
+               <div className="flex items-center justify-center">
+                  <Spinner color="primary" />
+               </div>
             ) : (
                history.map((chat, index) => (
                   <div
@@ -118,12 +120,21 @@ const ChatHistoryContainer: React.FC<IProps> = ({
                      key={index}
                      onClick={() => selectChat(chat)}
                   >
-                     <div className="flex justify-around w-full">
-                        {!collapsed && <RiChatThreadLine size={22} />}
-                        {chat.slug}
-                     </div>
+                     {collapsed ? (
+                        <RiChatThreadLine size={22} />
+                     ) : (
+                        <div className="flex w-full justify-around">
+                           <RiChatThreadLine size={22} />
+                           {chat.slug}
+                        </div>
+                     )}
                   </div>
                ))
+            )}
+            {isEmpty && (
+               <div className="flex items-center justify-center">
+                  تاریخچه ای ثبت نشده است
+               </div>
             )}
          </Menu>
       </Sidebar>

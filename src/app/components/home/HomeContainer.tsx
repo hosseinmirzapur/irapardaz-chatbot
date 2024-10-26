@@ -1,29 +1,19 @@
 "use client"
 
 import Image from "next/image"
-import { useRouter } from "next/navigation"
-
-import { useState } from "react"
 
 import { Button } from "@nextui-org/react"
 
 import { FaList } from "react-icons/fa"
-import { IoMdAdd } from "react-icons/io"
-import CorporateModal from "../corporates/CorporateModal"
 
 const HomeContainer = () => {
-   // ** States and variables
-   const router = useRouter()
-   const [corpModal, setCorpModal] = useState(false)
-
    // ** Functions
-   const toggleOpen = () => setCorpModal((prev) => !prev)
    const handleCorporateList = () => {
-      router.push("/corporates")
-   }
-
-   const handleAddCorporate = () => {
-      toggleOpen()
+      const anchor = document.createElement("a")
+      anchor.target = "_blank"
+      anchor.href = "https://chatbots-api.irapardaz.ir/admin/corporates"
+      anchor.click()
+      anchor.remove()
    }
 
    return (
@@ -69,23 +59,7 @@ const HomeContainer = () => {
             >
                لیست شرکت ها
             </Button>
-            <Button
-               radius="lg"
-               color="primary"
-               variant="shadow"
-               endContent={<IoMdAdd size={22} />}
-               size="lg"
-               onClick={handleAddCorporate}
-            >
-               افزودن شرکت جدید
-            </Button>
          </div>
-         <CorporateModal
-            isOpen={corpModal}
-            mode="create"
-            toggleChange={() => {}}
-            toggleOpen={toggleOpen}
-         />
       </div>
    )
 }

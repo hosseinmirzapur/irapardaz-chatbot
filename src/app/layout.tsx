@@ -1,6 +1,7 @@
 import "./fonts/Yekan.css"
 import "./globals.css"
 import ApplicationContainer from "./ApplicationContainer"
+import { Toaster } from "react-hot-toast"
 
 export default function RootLayout({
    children,
@@ -10,6 +11,12 @@ export default function RootLayout({
    return (
       <html lang="en">
          <body dir="rtl">
+            <Toaster
+               position="top-center"
+               toastOptions={{
+                  duration: 3000,
+               }}
+            />
             <ApplicationContainer>{children}</ApplicationContainer>
          </body>
       </html>

@@ -1,7 +1,7 @@
 import axios from "axios"
 
 const api = axios.create({
-   baseURL: "https://api-chatbots.liara.run/api",
+   baseURL: "https://chatbots-api.irapardaz.ir/api",
    headers: {
       common: {
          Accept: "application/json",

@@ -67,8 +67,8 @@ const CorporateContainer: React.FC<IProps> = ({ corporate }) => {
    }, [selectedChat])
 
    return (
-      <div className="grid grid-cols-5 min-h-screen">
-         <div className="bg-primary-100 min-h-screen col-span-1">
+      <div className="flex min-h-screen">
+         <div className="bg-primary-100 min-h-screen">
             <ChatHistoryContainer
                history={chatHistory}
                selectChat={selectChat}
@@ -80,15 +80,17 @@ const CorporateContainer: React.FC<IProps> = ({ corporate }) => {
                selectedChat={selectedChat}
             />
          </div>
-         <div className="relative h-full col-span-4">
-            <Image
-               src={`https://irapardaz-chatbots.storage.iran.liara.space/${currentCorp?.chat_bg}`}
-               alt="background-image"
-               fill
-               style={{
-                  filter: "brightness(50%)",
-               }}
-            />
+         <div className="relative min-h-screen h-full w-full">
+            {currentCorp?.chat_bg && (
+               <Image
+                  src={`https://irapardaz-chatbots.storage.iran.liara.space/${currentCorp?.chat_bg}`}
+                  alt="background-image"
+                  fill
+                  style={{
+                     filter: "brightness(50%)",
+                  }}
+               />
+            )}
             <ChatContainer
                messages={messages}
                selectedChat={selectedChat}

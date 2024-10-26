@@ -1,7 +1,6 @@
 "use client"
 
 import { NextUIProvider } from "@nextui-org/react"
-import { Toaster } from "react-hot-toast"
 
 interface IProps {
    children: React.ReactNode
@@ -16,12 +15,6 @@ const ApplicationContainer: React.FC<IProps> = ({ children }) => {
             to-blue-50
          "
       >
-         <Toaster
-            position="top-center"
-            toastOptions={{
-               duration: 3000,
-            }}
-         />
          {children}
       </NextUIProvider>
    )

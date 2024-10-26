@@ -12,7 +12,6 @@ export interface Chat {
 }
 
 export interface Message {
-   id: number | string
    role: "user" | "bot"
    text: string
 }

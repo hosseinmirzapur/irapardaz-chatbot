@@ -6,6 +6,7 @@ import { MdSend } from "react-icons/md"
 import { useState } from "react"
 import api from "@/external/api"
 import { BiMicrophone } from "react-icons/bi"
+import toast from "react-hot-toast"
 
 interface IProps {
    messages?: Message[]
@@ -25,18 +26,24 @@ const ChatContainer: React.FC<IProps> = ({
    // ** Functions
    const sendToChat = async () => {
       setWaiting(true)
-      const { data } = await api.post(`/chats/${selectedChat?.slug}/messages`, {
-         text,
-      })
-
       messages?.push({
-         id: data.user.id,
-         text: data.user.text,
+         text,
          role: "user",
       })
+      const { data, status } = await api.post(
+         `/chats/${selectedChat?.slug}/messages`,
+         {
+            text,
+         }
+      )
+
+      if (status >= 400 && status < 600) {
+         toast.error(data.message)
+         setWaiting(false)
+         return
+      }
 
       messages?.push({
-         id: data.bot.id,
          text: data.bot.text,
          role: "bot",
       })
@@ -46,17 +53,19 @@ const ChatContainer: React.FC<IProps> = ({
       setText("")
    }
    return (
-      <div className="flex flex-col relative h-screen w-11/12 mx-auto py-20">
-         <div className="flex flex-col items-center justify-center gap-10 max-h-screen overflow-auto">
-            {isLoading && (
-               <div className="flex justify-center items-center">
-                  <Spinner color="primary" />
-               </div>
-            )}
+      <div className="flex flex-col relative h-screen bg-primary-300 pt-5 pb-20 overflow-auto">
+         {/* todo: bg-none */}
+         {isLoading && (
+            <div className="flex justify-center items-center">
+               <Spinner color="primary" />
+            </div>
+         )}
+         <div className="flex flex-col gap-10 w-full px-5">
             {messages?.map((message, index) => (
                <div
                   key={index}
                   className={`
+                     transition-all
                      flex
                      w-full
                      items-center
@@ -71,51 +80,54 @@ const ChatContainer: React.FC<IProps> = ({
                </div>
             ))}
          </div>
-         <Textarea
-            className="absolute bottom-0"
-            minRows={1}
-            classNames={{
-               innerWrapper: "items-center p-1",
-            }}
-            startContent={
-               <div className="flex transition-all">
-                  {text != "" ? (
-                     <Button
-                        isIconOnly
-                        variant="shadow"
-                        color="primary"
-                        onClick={sendToChat}
-                        radius="full"
-                        className="transition-all"
-                        isLoading={waiting}
-                     >
-                        <MdSend size={22} />
-                     </Button>
-                  ) : (
-                     <Button
-                        isIconOnly
-                        variant="shadow"
-                        color="primary"
-                        onClick={sendToChat}
-                        disabled={text === ""}
-                        radius="full"
-                        isLoading={waiting}
-                     >
-                        <BiMicrophone size={22} />
-                     </Button>
-                  )}
-               </div>
-            }
-            placeholder="سوال خود را اینجا بنویسید..."
-            onValueChange={setText}
-            value={text}
-            onKeyDown={(e) => {
-               if ((e.ctrlKey || e.metaKey) && e.key == "Enter") {
-                  e.preventDefault()
-                  sendToChat()
+         <div className="fixed bottom-0 flex justify-center items-center w-full bg-transparent">
+            <Textarea
+               radius="none"
+               minRows={1}
+               classNames={{
+                  innerWrapper: "items-center p-1",
+               }}
+               startContent={
+                  <>
+                     {text != "" ? (
+                        <Button
+                           isIconOnly
+                           variant="shadow"
+                           color="primary"
+                           onClick={sendToChat}
+                           radius="full"
+                           className="cursor-pointer"
+                           isLoading={waiting}
+                        >
+                           <MdSend size={22} />
+                        </Button>
+                     ) : (
+                        <Button
+                           isIconOnly
+                           variant="shadow"
+                           color="primary"
+                           onClick={sendToChat}
+                           disabled={text === ""}
+                           radius="full"
+                           isLoading={waiting}
+                           className="cursor-pointer"
+                        >
+                           <BiMicrophone size={22} />
+                        </Button>
+                     )}
+                  </>
                }
-            }}
-         />
+               placeholder="سوال خود را اینجا بنویسید..."
+               onValueChange={setText}
+               value={text}
+               onKeyDown={(e) => {
+                  if ((e.ctrlKey || e.metaKey) && e.key == "Enter") {
+                     e.preventDefault()
+                     sendToChat()
+                  }
+               }}
+            />
+         </div>
       </div>
    )
 }
