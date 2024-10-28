@@ -24,12 +24,14 @@ jobs:
 
          - name: Build Docker image
            run: |
-              docker build -t irapardaz-chatbots .
+              docker build --no-cache -t ${{ secrets.DOCKER_USERNAME }}/irapardaz-chatbots:latest \
+                -t ${{ secrets.DOCKER_USERNAME }}/irapardaz-chatbots:${{ github.sha }} \
+                --build-arg CACHEBUST=${{ github.run_id }} .
 
          - name: Push Docker image to Docker Hub
            run: |
-              docker tag irapardaz-chatbots ${{ secrets.DOCKER_USERNAME }}/irapardaz-chatbots:latest
               docker push ${{ secrets.DOCKER_USERNAME }}/irapardaz-chatbots:latest
+              docker push ${{ secrets.DOCKER_USERNAME }}/irapardaz-chatbots:${{ github.sha }}
 
          - name: SSH to server and run Docker container
            env:
@@ -41,13 +43,13 @@ jobs:
               chmod 600 private_key
               ssh -o StrictHostKeyChecking=no -i private_key $USERNAME@$SERVER_IP << 'EOF'
                 # Pull the latest image from Docker Hub
-                docker pull ${{ secrets.DOCKER_USERNAME }}/irapardaz-chatbots:latest
+                docker pull ${{ secrets.DOCKER_USERNAME }}/irapardaz-chatbots:${{ github.sha }}
                 
                 # Stop and remove any existing container (if running)
                 docker stop irapardaz-chatbots || true && docker rm irapardaz-chatbots || true
                 
                 # Run the new container
-                docker run -d --name irapardaz-chatbots -p 3000:3000 ${{ secrets.DOCKER_USERNAME }}/irapardaz-chatbots:latest
+                docker run -d --name irapardaz-chatbots -p 3000:3000 ${{ secrets.DOCKER_USERNAME }}/irapardaz-chatbots:${{ github.sha }}
               EOF
 
               # Clean up the temporary key file
