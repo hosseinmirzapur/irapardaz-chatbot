@@ -3,7 +3,7 @@
 import { Avatar, Button, Spinner, Textarea } from "@nextui-org/react"
 import { Chat, Message } from "../corporates/data"
 import { MdSend } from "react-icons/md"
-import { useState } from "react"
+import { useEffect, useRef, useState } from "react"
 import api from "@/external/api"
 import { BiMicrophone } from "react-icons/bi"
 import toast from "react-hot-toast"
@@ -22,6 +22,7 @@ const ChatContainer: React.FC<IProps> = ({
    // ** States and variables
    const [text, setText] = useState("")
    const [waiting, setWaiting] = useState(false)
+   const endOfMessageRef = useRef<HTMLDivElement | null>(null)
 
    // ** Functions
    const sendToChat = async () => {
@@ -30,6 +31,8 @@ const ChatContainer: React.FC<IProps> = ({
          text,
          role: "user",
       })
+
+      scrollToBottom()
       const { data, status } = await api.post(
          `/chats/${selectedChat?.slug}/messages`,
          {
@@ -51,16 +54,28 @@ const ChatContainer: React.FC<IProps> = ({
       setWaiting(false)
 
       setText("")
+
+      scrollToBottom()
    }
+
+   const scrollToBottom = () => {
+      endOfMessageRef.current?.scrollIntoView({
+         behavior: "smooth",
+      })
+   }
+
+   useEffect(() => {
+      scrollToBottom()
+   }, [messages])
+
    return (
-      <div className="flex flex-col relative h-screen bg-primary-300 pt-5 pb-20 overflow-auto">
-         {/* todo: bg-none */}
+      <div className="flex flex-col relative min-h-screen bg-primary-300 pt-5 pb-20 overflow-auto">
          {isLoading && (
             <div className="flex justify-center items-center">
                <Spinner color="primary" />
             </div>
          )}
-         <div className="flex flex-col gap-10 w-full px-5">
+         <div className="flex flex-col gap-10 w-full px-4 md:px-7 lg:px-10">
             {messages?.map((message, index) => (
                <div
                   key={index}
@@ -71,15 +86,36 @@ const ChatContainer: React.FC<IProps> = ({
                      items-center
                      gap-2
                      justify-start
-                     ${message.role == "user" ? "" : " flex-row-reverse"}`}
+                     ${message.role == "user" ? "" : " flex-row-reverse"}
+                  `}
                >
-                  <Avatar name={message.role == "bot" ? "ربات" : "من"} />
-                  <div className="w-[45%] min-h-[100px] p-5 rounded-3xl bg-danger-100">
+                  <Avatar
+                     name={message.role == "bot" ? "ربات" : "من"}
+                     src={message.role == "bot" ? "/support.png" : "/qmark.png"}
+                     className="shadow-3xl"
+                  />
+                  <div
+                     className={`
+                        max-w-[80%]
+                        md:max-w-[45%]
+                        min-h-[60px]
+                        p-5
+                        rounded-2xl
+                        shadow-xl
+                        ${
+                           message.role == "user"
+                              ? "bg-danger-100"
+                              : "bg-secondary-100"
+                        }
+                     `}
+                  >
                      {message.text}
                   </div>
                </div>
             ))}
          </div>
+         <div ref={endOfMessageRef} />
+
          <div className="fixed bottom-0 flex justify-center items-center w-full bg-transparent">
             <Textarea
                radius="none"

@@ -43,6 +43,8 @@ const CorporateContainer: React.FC<IProps> = ({ corporate }) => {
       const data: Chat[] = resp.data.chats
       if (data.length != 0) {
          setEmpty(false)
+
+         if (data[data.length - 1]) selectChat(data[data.length - 1])
       }
       setChatHistory(data)
       toggleLoading()
@@ -67,8 +69,8 @@ const CorporateContainer: React.FC<IProps> = ({ corporate }) => {
    }, [selectedChat])
 
    return (
-      <div className="flex min-h-screen">
-         <div className="bg-primary-100 min-h-screen">
+      <div className="flex flex-col md:flex-row min-h-screen relative">
+         <div className="bg-primary-100 md:min-h-screen relative">
             <ChatHistoryContainer
                history={chatHistory}
                selectChat={selectChat}
@@ -80,7 +82,7 @@ const CorporateContainer: React.FC<IProps> = ({ corporate }) => {
                selectedChat={selectedChat}
             />
          </div>
-         <div className="relative min-h-screen h-full w-full">
+         <div className="relative min-h-screen w-full">
             {currentCorp?.chat_bg && (
                <Image
                   src={`https://irapardaz-chatbots.storage.iran.liara.space/${currentCorp?.chat_bg}`}
