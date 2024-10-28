@@ -49,7 +49,7 @@ jobs:
                 docker stop irapardaz-chatbots || true && docker rm irapardaz-chatbots || true
                 
                 # Run the new container
-                docker run -d --name irapardaz-chatbots -p 3000:3000 ${{ secrets.DOCKER_USERNAME }}/irapardaz-chatbots:${{ github.sha }}
+                docker run --network bridge -d --name irapardaz-chatbots -p 3000:3000 ${{ secrets.DOCKER_USERNAME }}/irapardaz-chatbots:${{ github.sha }}
               EOF
 
               # Clean up the temporary key file
