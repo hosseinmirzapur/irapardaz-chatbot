@@ -29,6 +29,9 @@ const CorporateContainer: React.FC<IProps> = ({ corporate }) => {
    const selectChat = (chat: Chat) => {
       setSelectedChat(chat)
    }
+   const fillMessages = (message: Message) => {
+      setMessages([...messages, message])
+   }
 
    const getCurrentCorp = async () => {
       toggleLoading()
@@ -80,6 +83,7 @@ const CorporateContainer: React.FC<IProps> = ({ corporate }) => {
                isEmpty={empty}
                isLoading={loading}
                selectedChat={selectedChat}
+               fillMessages={fillMessages}
             />
          </div>
          <div className="relative min-h-screen w-full">

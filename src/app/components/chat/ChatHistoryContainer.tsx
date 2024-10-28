@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import {
    Avatar,
    Button,
@@ -14,7 +14,7 @@ import {
    Tooltip,
 } from "@nextui-org/react"
 
-import { Chat, Corporate } from "../corporates/data"
+import { Chat, Corporate, Message } from "../corporates/data"
 
 import { Menu, Sidebar } from "react-pro-sidebar"
 
@@ -23,6 +23,8 @@ import { MdAdd } from "react-icons/md"
 import { RiChatThreadLine } from "react-icons/ri"
 
 import api from "@/external/api"
+import toast, { Toaster } from "react-hot-toast"
+import axios from "axios"
 
 interface IProps {
    history: Chat[]
@@ -33,6 +35,24 @@ interface IProps {
    isEmpty: boolean
    isLoading: boolean
    selectedChat?: Chat
+   fillMessages: (message: Message) => void
+}
+
+const useScrollY = () => {
+   const [scrollY, setScrollY] = useState(0)
+
+   useEffect(() => {
+      // Function to update scroll position
+      const handleScroll = () => setScrollY(window.scrollY)
+
+      // Add event listener on mount
+      window.addEventListener("scroll", handleScroll)
+
+      // Clean up event listener on unmount
+      return () => window.removeEventListener("scroll", handleScroll)
+   }, [])
+
+   return scrollY
 }
 
 const ChatHistoryContainer: React.FC<IProps> = ({
@@ -44,11 +64,13 @@ const ChatHistoryContainer: React.FC<IProps> = ({
    isEmpty,
    isLoading,
    selectedChat,
+   fillMessages,
 }) => {
    // ** States and variables
    const [collapsed, setCollapsed] = useState(false)
    const [loading, setLoading] = useState(false)
    const [navOpen, setNavOpen] = useState(false)
+   const scrollY = useScrollY()
 
    // ** Functions
    const toggleCollapse = () => setCollapsed((prev) => !prev)
@@ -56,10 +78,24 @@ const ChatHistoryContainer: React.FC<IProps> = ({
 
    const createNewChat = async () => {
       setLoading(true)
-      const { data } = await api.post(`/corporates/${corporate}/chat`)
-      selectChat(data.chat)
-      toggleChange()
-      setLoading(false)
+      try {
+         const { data } = await api.post(`/corporates/${corporate}/chat/tci`)
+         selectChat(data.chat)
+         fillMessages({
+            role: "bot",
+            text: data.starter,
+         })
+         toggleChange()
+         setLoading(false)
+      } catch (error) {
+         toggleChange()
+         setLoading(false)
+         if (axios.isAxiosError(error)) {
+            toast.error(error.response?.data.message)
+         } else {
+            toast.error("خطایی ناشناس رخ داده است")
+         }
+      }
    }
 
    const scrollToTop = () => {
@@ -162,7 +198,7 @@ const ChatHistoryContainer: React.FC<IProps> = ({
                      w-full
                      absolute
                      bottom-0
-                     ${window.scrollY > 10 ? "block" : "hidden"}
+                     ${scrollY > 10 ? "block" : "hidden"}
                   `}
             >
                <Tooltip content={"رفتن به بالای صفحه"} color="primary">
@@ -261,6 +297,12 @@ const ChatHistoryContainer: React.FC<IProps> = ({
                )}
             </Menu>
          </Sidebar>
+         <Toaster
+            position="top-center"
+            toastOptions={{
+               duration: 3000,
+            }}
+         />
       </>
    )
 }
