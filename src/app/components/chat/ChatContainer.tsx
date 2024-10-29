@@ -1,7 +1,7 @@
 "use client"
 
 import { Avatar, Button, Spinner, Textarea } from "@nextui-org/react"
-import { Chat, Message } from "../corporates/data"
+import { Chat, Corporate, Message } from "../corporates/data"
 import { MdSend } from "react-icons/md"
 import { useEffect, useRef, useState } from "react"
 import api from "@/external/api"
@@ -9,17 +9,20 @@ import { BiMicrophone } from "react-icons/bi"
 import toast, { Toaster } from "react-hot-toast"
 import axios from "axios"
 import VoiceRecordModal from "./VoiceRecordModal"
+import ReactMarkdown from "react-markdown"
 
 interface IProps {
    messages?: Message[]
    selectedChat?: Chat
    isLoading: boolean
+   currentCorp?: Corporate
 }
 
 const ChatContainer: React.FC<IProps> = ({
    messages,
    selectedChat,
    isLoading,
+   currentCorp,
 }) => {
    // ** States and variables
    const [text, setText] = useState("")
@@ -154,7 +157,11 @@ const ChatContainer: React.FC<IProps> = ({
 
    return (
       <>
-         <div className="flex flex-col relative min-h-screen bg-primary-300 pt-5 pb-20 overflow-auto">
+         <div
+            className={`flex flex-col relative min-h-screen ${
+               currentCorp?.chat_bg ? "" : "bg-primary-300"
+            } pt-5 pb-20 overflow-auto`}
+         >
             {isLoading && (
                <div className="flex justify-center items-center">
                   <Spinner color="primary" />
@@ -201,6 +208,8 @@ const ChatContainer: React.FC<IProps> = ({
                            <div className="flex items-center justify-center">
                               <Spinner color="primary" />
                            </div>
+                        ) : message.role === "bot" ? (
+                           <ReactMarkdown>{message.text}</ReactMarkdown>
                         ) : (
                            message.text
                         )}

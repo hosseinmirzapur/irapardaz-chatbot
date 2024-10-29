@@ -97,7 +97,7 @@ const VoiceRecordModal: React.FC<IProps> = ({
    }, [open])
 
    return (
-      <Modal isOpen={open} onOpenChange={toggleOpen}>
+      <Modal isOpen={open} onOpenChange={toggleOpen} isDismissable={false}>
          <ModalContent>
             {(onClose) => (
                <>
@@ -119,11 +119,7 @@ const VoiceRecordModal: React.FC<IProps> = ({
                            )}
                         </Button>
                         {recordedUrl != "" && (
-                           <audio
-                              controls
-                              src={recordedUrl}
-                              className="rounded-2xl bg-primary-500"
-                           />
+                           <audio controls src={recordedUrl} />
                         )}
                      </div>
                      {recording ? (

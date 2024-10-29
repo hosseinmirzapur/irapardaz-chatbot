@@ -101,6 +101,7 @@ const CorporateContainer: React.FC<IProps> = ({ corporate }) => {
                messages={messages}
                selectedChat={selectedChat}
                isLoading={loading}
+               currentCorp={currentCorp}
             />
          </div>
       </div>
