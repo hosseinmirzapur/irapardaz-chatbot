@@ -8,6 +8,7 @@ import api from "@/external/api"
 import { BiMicrophone } from "react-icons/bi"
 import toast, { Toaster } from "react-hot-toast"
 import axios from "axios"
+import VoiceRecordModal from "./VoiceRecordModal"
 
 interface IProps {
    messages?: Message[]
@@ -24,9 +25,11 @@ const ChatContainer: React.FC<IProps> = ({
    const [text, setText] = useState("")
    const [waiting, setWaiting] = useState(false)
    const endOfMessageRef = useRef<HTMLDivElement | null>(null)
+   const [record, setRecord] = useState(false)
+   const [voiceFile, setVoiceFile] = useState<Blob | null>(null)
 
    // ** Functions
-   const sendToChat = async () => {
+   const sendText = async () => {
       setWaiting(true)
       messages?.push({
          text,
@@ -74,10 +77,75 @@ const ChatContainer: React.FC<IProps> = ({
       }
    }
 
+   const sendVoice = async () => {
+      setWaiting(true)
+
+      messages?.push({
+         text: "waiting",
+         role: "user",
+      })
+      messages?.push({
+         text: "waiting",
+         role: "bot",
+      })
+
+      scrollToBottom()
+
+      try {
+         const fd = new FormData()
+         if (voiceFile) {
+            fd.append("voice", voiceFile, "voice-message.webm")
+         }
+
+         const { data } = await api.post(
+            `/chats/${selectedChat?.slug}/messages`,
+            fd
+         )
+
+         const userIndex = messages?.findLastIndex(
+            (message) => message.role == "user"
+         )
+
+         if (userIndex && messages) {
+            messages[userIndex].text = data.user.text
+         }
+
+         const botIndex = messages?.findLastIndex(
+            (message) => message.role == "bot"
+         )
+
+         if (botIndex && messages) {
+            messages[botIndex].text = data.bot.text
+         }
+
+         setWaiting(false)
+         setText("")
+
+         scrollToBottom()
+      } catch (error) {
+         setWaiting(false)
+
+         // pop 2 last items from messages array
+         messages?.pop()
+         messages?.pop()
+
+         if (axios.isAxiosError(error)) {
+            toast.error(error.response?.data.message)
+         } else {
+            toast.error("خطای نامشخصی رخ داده است")
+         }
+      }
+   }
+
    const scrollToBottom = () => {
       endOfMessageRef.current?.scrollIntoView({
          behavior: "smooth",
       })
+   }
+
+   const toggleRecord = () => setRecord((prev) => !prev)
+   const fillVoice = (voice: Blob) => {
+      setVoiceFile(voice)
    }
 
    useEffect(() => {
@@ -145,6 +213,7 @@ const ChatContainer: React.FC<IProps> = ({
             <div className="fixed bottom-0 flex justify-center items-center w-full bg-transparent">
                <Textarea
                   radius="none"
+                  autoFocus
                   minRows={1}
                   classNames={{
                      innerWrapper: "items-center p-1",
@@ -156,7 +225,7 @@ const ChatContainer: React.FC<IProps> = ({
                               isIconOnly
                               variant="shadow"
                               color="primary"
-                              onClick={sendToChat}
+                              onClick={sendText}
                               radius="full"
                               className="cursor-pointer"
                               isLoading={waiting}
@@ -168,7 +237,7 @@ const ChatContainer: React.FC<IProps> = ({
                               isIconOnly
                               variant="shadow"
                               color="primary"
-                              onClick={sendToChat}
+                              onPress={toggleRecord}
                               disabled={text === ""}
                               radius="full"
                               isLoading={waiting}
@@ -185,11 +254,18 @@ const ChatContainer: React.FC<IProps> = ({
                   onKeyDown={(e) => {
                      if ((e.ctrlKey || e.metaKey) && e.key == "Enter") {
                         e.preventDefault()
-                        sendToChat()
+                        sendText()
                      }
                   }}
                />
             </div>
+            <VoiceRecordModal
+               open={record}
+               toggleOpen={toggleRecord}
+               fillVoice={fillVoice}
+               sendVoice={sendVoice}
+               waiting={waiting}
+            />
          </div>
          <Toaster
             position="top-center"
