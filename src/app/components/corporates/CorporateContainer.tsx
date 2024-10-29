@@ -95,6 +95,7 @@ const CorporateContainer: React.FC<IProps> = ({ corporate }) => {
                   style={{
                      filter: "brightness(50%)",
                   }}
+                  className="fixed top-0 right-0 left-0 bottom-0"
                />
             )}
             <ChatContainer
