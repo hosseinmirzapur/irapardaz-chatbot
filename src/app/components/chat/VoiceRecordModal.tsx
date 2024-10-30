@@ -152,7 +152,7 @@ const VoiceRecordModal: React.FC<IProps> = ({
                            onClose()
                         }}
                      >
-                        {waiting ? <Spinner color="primary" /> : "ارسال به چت"}
+                        {waiting ? <Spinner /> : "ارسال به چت"}
                      </Button>
                      <Button color="danger" variant="shadow" onPress={onClose}>
                         لغو
