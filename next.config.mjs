@@ -5,6 +5,7 @@ const nextConfig = {
          {
             hostname: "irapardaz-chatbots.storage.iran.liara.space",
             protocol: "https",
+            pathname: "/**",
          },
       ],
    },
