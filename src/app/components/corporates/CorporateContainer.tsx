@@ -89,13 +89,14 @@ const CorporateContainer: React.FC<IProps> = ({ corporate }) => {
          <div className="relative min-h-screen w-full">
             {currentCorp?.chat_bg && (
                <Image
-                  src={`https://irapardaz-chatbots.storage.iran.liara.space/${currentCorp?.chat_bg}`}
+                  src={`https://irapardaz-chatbots.storage.iran.liara.space/${currentCorp.chat_bg}`}
                   alt="background-image"
                   fill
                   style={{
                      filter: "brightness(50%)",
                   }}
                   className="fixed top-0 right-0 left-0 bottom-0"
+                  unoptimized
                />
             )}
             <ChatContainer
