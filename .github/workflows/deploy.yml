@@ -42,14 +42,20 @@ jobs:
               echo "$SSH_PRIVATE_KEY" | tr -d '\r' > private_key
               chmod 600 private_key
               ssh -o StrictHostKeyChecking=no -i private_key $USERNAME@$SERVER_IP << 'EOF'
+               # Stop and remove any existing container (if running)
+                docker stop irapardaz-chatbots || true && docker rm irapardaz-chatbots || true
+
+                sleep 3
+
                 # Pull the latest image from Docker Hub
                 docker pull ${{ secrets.DOCKER_USERNAME }}/irapardaz-chatbots:${{ github.sha }}
                 
-                # Stop and remove any existing container (if running)
-                docker stop irapardaz-chatbots || true && docker rm irapardaz-chatbots || true
-                
                 # Run the new container
-                docker run --network bridge -d --name irapardaz-chatbots -p 3000:3000 ${{ secrets.DOCKER_USERNAME }}/irapardaz-chatbots:${{ github.sha }}
+                docker run --rm --network bridge -d --name irapardaz-chatbots -p 3000:3000 ${{ secrets.DOCKER_USERNAME }}/irapardaz-chatbots:${{ github.sha }}
+
+                sleep 3
+                echo "Pruning dangling images..."
+                docker image prune -f
               EOF
 
               # Clean up the temporary key file
